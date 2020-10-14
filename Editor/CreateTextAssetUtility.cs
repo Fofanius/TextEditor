@@ -1,23 +1,16 @@
 ﻿using System.IO;
 using UnityEditor;
-using UnityEngine;
 
 namespace TextEditor.Editor
 {
-    public class CreateUtility : UnityEditor.Editor
+    public static class CreateTextAssetUtility
     {
-        [MenuItem("Assets/Create/Text/Empty text file", false, 0)]
-        public static void CreateTextFile()
-        {
-            CreateAssetSafe(Application.dataPath, "README", "txt");
-        }
-
         /// <summary>
         /// Безопасное создание файла.
         /// <para/>
         /// Если файл уже существует, создатст такой же, но с индексом.
         /// </summary>
-        private static void CreateAssetSafe(string directory, string fileName, string extension)
+        public static void CreateAssetSafe(string directory, string fileName, string extension)
         {
             var path = $"{directory}/{fileName}.{extension}";
 
