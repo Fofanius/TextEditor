@@ -34,5 +34,6 @@ namespace TextEditor.Editor
 
             AssetDatabase.Refresh();
         }
+
     }
 }
