@@ -29,10 +29,27 @@ namespace TextEditor.Editor
             }
         }
 
+        private void OnEnable()
+        {
+            minSize = new Vector2(450, 300);
+        }
+
         private void OnGUI()
         {
-            DrawMenu();
-            DrawText();
+            if (_targetAsset)
+            {
+                DrawMenu();
+                DrawText();
+            }
+            else
+            {
+                DrawEmpty();
+            }
+        }
+
+        private void DrawEmpty()
+        {
+            EditorGUILayout.LabelField($"Не удалось открыть");
         }
 
         private void DrawMenu()
@@ -49,14 +66,13 @@ namespace TextEditor.Editor
 
         private void Save()
         {
-            if (_targetAsset)
-            {
-                // https://answers.unity.com/questions/12034/change-contents-of-textasset.html
-                // способ обновления TextAsset
-                File.WriteAllText(AssetDatabase.GetAssetPath(_targetAsset), _text);
-                EditorUtility.SetDirty(_targetAsset);
-            }
-            
+            if (!_targetAsset) return;
+
+            // https://answers.unity.com/questions/12034/change-contents-of-textasset.html
+            // способ обновления TextAsset
+            File.WriteAllText(AssetDatabase.GetAssetPath(_targetAsset), _text);
+            EditorUtility.SetDirty(_targetAsset);
+
             AssetDatabase.Refresh();
         }
 
@@ -64,7 +80,7 @@ namespace TextEditor.Editor
         {
             _scroll = EditorGUILayout.BeginScrollView(_scroll);
             {
-                _text = EditorGUILayout.TextArea(_text);
+                _text = EditorGUILayout.TextArea(_text, GUILayout.MinHeight(300));
             }
             EditorGUILayout.EndScrollView();
         }
