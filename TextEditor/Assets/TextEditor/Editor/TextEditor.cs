@@ -8,25 +8,22 @@ namespace TextEditor.Editor
     {
         private string _text;
         private Vector2 _scroll;
+
         private TextAsset _targetAsset;
 
         internal static void Open(TextAsset asset)
         {
             var w = CreateInstance<TextEditor>();
 
-            w.titleContent = new GUIContent(asset.name);
             w.TryInitializeText(asset);
-
             w.Show();
         }
 
         private void TryInitializeText(TextAsset asset)
         {
             _targetAsset = asset;
-            if (_targetAsset)
-            {
-                _text = _targetAsset.text;
-            }
+            titleContent = new GUIContent(_targetAsset ? _targetAsset.name : "*No asset*");
+            RefreshText();
         }
 
         private void OnEnable()
@@ -38,6 +35,7 @@ namespace TextEditor.Editor
         {
             if (_targetAsset)
             {
+                DrawAsset();
                 DrawMenu();
                 DrawText();
             }
@@ -47,9 +45,28 @@ namespace TextEditor.Editor
             }
         }
 
+        private void DrawAsset()
+        {
+            GUI.enabled = false;
+            {
+                EditorGUILayout.ObjectField(_targetAsset, typeof(TextAsset), false);
+            }
+            GUI.enabled = true;
+            EditorGUILayout.LabelField(AssetDatabase.GetAssetPath(_targetAsset), EditorStyles.miniLabel);
+        }
+
         private void DrawEmpty()
         {
-            EditorGUILayout.LabelField($"Не удалось открыть");
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("No asset . . .");
+            GUI.color = Color.red;
+            {
+                if (GUILayout.Button("Close"))
+                {
+                    Close();
+                }
+            }
+            GUI.color = Color.white;
         }
 
         private void DrawMenu()
@@ -74,15 +91,21 @@ namespace TextEditor.Editor
             EditorUtility.SetDirty(_targetAsset);
 
             AssetDatabase.Refresh();
+            RefreshText();
         }
 
         private void DrawText()
         {
             _scroll = EditorGUILayout.BeginScrollView(_scroll);
             {
-                _text = EditorGUILayout.TextArea(_text, GUILayout.MinHeight(300));
+                _text = EditorGUILayout.TextArea(_text, GUILayout.ExpandHeight(true));
             }
             EditorGUILayout.EndScrollView();
+        }
+
+        private void RefreshText()
+        {
+            _text = _targetAsset ? _targetAsset.text : string.Empty;
         }
     }
 }
