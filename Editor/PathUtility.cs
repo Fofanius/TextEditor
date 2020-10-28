@@ -26,9 +26,16 @@ namespace TextEditor.Editor
             if (!active) return Application.dataPath;
 
             var databasePath = AssetDatabase.GetAssetPath(active);
-            if (string.IsNullOrWhiteSpace(databasePath)) return Application.dataPath;
 
-            return Path.Combine(Application.dataPath, Path.GetDirectoryName(databasePath).Remove(0, 7));
+            if (!(active is DefaultAsset))
+            {
+                databasePath = Path.GetDirectoryName(databasePath);
+            }
+
+            // костыль: если выделена рутовая папка или служебная папка пакетов
+            if (databasePath.Equals("Assets") || databasePath.Equals("Packages")) return Application.dataPath;
+
+            return Path.Combine(Application.dataPath, databasePath.Remove(0, 7));
         }
     }
 }

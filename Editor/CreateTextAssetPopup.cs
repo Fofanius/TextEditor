@@ -5,6 +5,9 @@ namespace TextEditor.Editor
 {
     public class CreateTextAssetPopup : EditorWindow
     {
+        private const float POPUP_WIDTH = 350;
+        private const float POPUP_HEIGHT = 80;
+
         private string _targetPath;
         private string _fileName;
         private string _extension;
@@ -13,14 +16,14 @@ namespace TextEditor.Editor
         {
             var window = CreateInstance<CreateTextAssetPopup>();
 
-            window.titleContent = new GUIContent($"Create [{extension}]");
+            window.titleContent = new GUIContent($"Create . . .");
 
             window._extension = extension;
             window._fileName = fileName;
             window._targetPath = path;
 
-            window.position = new Rect(Screen.currentResolution.width / 2 - 175, Screen.currentResolution.height / 2 - 40, 350, 40);
-            window.minSize = window.maxSize = new Vector2(350, 80);
+            window.position = new Rect(Screen.currentResolution.width / 2f - POPUP_WIDTH / 2f, Screen.currentResolution.height / 2f - POPUP_HEIGHT / 2, POPUP_WIDTH, POPUP_HEIGHT);
+            window.minSize = window.maxSize = new Vector2(POPUP_WIDTH, POPUP_HEIGHT);
 
             window.ShowModalUtility();
         }
@@ -30,9 +33,14 @@ namespace TextEditor.Editor
             EditorGUILayout.Space();
 
             EditorGUILayout.LabelField($"Path: {_targetPath}");
-            _fileName = EditorGUILayout.TextField("File name", _fileName);
+            EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
+            {
+                _fileName = EditorGUILayout.TextField("File name", _fileName);
+                _extension = EditorGUILayout.TextField(_extension, GUILayout.Width(25f));
+            }
+            EditorGUILayout.EndHorizontal();
 
-            GUI.enabled = PathUtility.IsValidFileName(_fileName);
+            GUI.enabled = PathUtility.IsValidFileName(_fileName) && !string.IsNullOrWhiteSpace(_extension);
             {
                 if (GUILayout.Button($"Create: {(_fileName?.Length > 0 ? _fileName : "-")}.{_extension}", GUILayout.Height(22f)))
                 {
