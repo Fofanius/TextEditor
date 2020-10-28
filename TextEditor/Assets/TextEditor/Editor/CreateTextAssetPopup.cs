@@ -40,7 +40,7 @@ namespace TextEditor.Editor
             }
             EditorGUILayout.EndHorizontal();
 
-            GUI.enabled = PathUtility.IsValidFileName(_fileName) && !string.IsNullOrWhiteSpace(_extension);
+            GUI.enabled = PathUtility.IsValidFileName(_fileName) && PathUtility.IsValidFileName(_extension);
             {
                 if (GUILayout.Button($"Create: {(_fileName?.Length > 0 ? _fileName : "-")}.{_extension}", GUILayout.Height(22f)))
                 {
